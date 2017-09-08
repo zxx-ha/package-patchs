@@ -56,7 +56,7 @@ try:
 except StopIteration:
     print 'StopIteration err'
 else: 
-    os.system("rm tmp")
+    os.system("rm %s" % tmp)
     reader.close()
     print 'output: ' + packagename + '.zip'
 
