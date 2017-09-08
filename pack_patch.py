@@ -13,14 +13,25 @@ import sys
 import string
 import time
 
-commit = sys.argv[1]
-num = sys.argv[2]
+try:
+    commit = sys.argv[1]
+    num = sys.argv[2]
+except IndexError:
+    print "cmd err!!!"
+    print "sample:"
+    print "python pack_patch.py commit-id patch-number"
+    print "python pack_patch.py 1d17982938f5808205debf052cab10381f6e5282 -1"
+    sys.exit()
+
 now = time.strftime('%Y%m%d%H%M%S',time.localtime(time.time()))
 packagename = 'patch-' + now
 SRC = packagename + '/' + 'src'
 PATCHS = packagename + '/' + 'patchs'
 tmp = "_tmp" + now
 
+if os.system("git log %s %s" % (commit, num)):
+    print "%s does not exist!!!" % commit
+    sys.exit()
 #TO DO 
 
 #store patchs
