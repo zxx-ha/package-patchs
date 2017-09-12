@@ -27,30 +27,26 @@ now = time.strftime('%Y%m%d%H%M%S',time.localtime(time.time()))
 packagename = 'patch-' + now
 SRC = packagename + '/' + 'src'
 PATCHS = packagename + '/' + 'patchs'
-tmp = "_tmp" + now
 
-if os.system("git log %s %s" % (commit, num)):
-    print "%s does not exist!!!" % commit
+if os.system("git log %s %s > %s" % (commit, num, now)):
+    print "commit-id %s does not exist!!!" % commit
+    os.system("rm %s" % now)
     sys.exit()
 #TO DO 
 
 #store patchs
 os.system("mkdir -p %s" % PATCHS);
-cmd = 'git format-patch' + ' ' + sys.argv[1] + ' ' + sys.argv[2] + ' ' +'-o' + ' ' + PATCHS + ' > ' + tmp
-print cmd
-os.system(cmd);
+os.system("git format-patch %s %s -o %s > %s" % (sys.argv[1], sys.argv[2], PATCHS, now));
 
 #store src
 os.system("mkdir -p %s" % SRC);
-cmd = 'git log' + ' ' + sys.argv[1] + ' ' + sys.argv[2] + ' ' + "--name-status |egrep '^M\t|^A\t|^D\t'" ' > ' + tmp
-os.system(cmd)
-reader = open(tmp, 'r')
+os.system("git log %s %s --name-status |egrep '^M\t|^A\t|^D\t' > %s" % (sys.argv[1], sys.argv[2], now))
+reader = open(now, 'r')
 try:
     while True:
         line = reader.readline()
         if not line:
-            cmd = 'zip -r ' + packagename + '.zip ' + packagename + ' > ' + tmp
-            os.system(cmd);
+            os.system("zip -r %s.zip %s" % (packagename, packagename));
             os.system('rm %s -rf' % packagename)
             print '===package end==='
             break
@@ -61,13 +57,11 @@ try:
         if line[0] == 'D':
             continue
         line = line.strip('^M\t|^A\t|\n') #remove useless character
-        cmd = 'cp --parents ' + line + ' ' + SRC 
-        print cmd
-        os.system(cmd)
+        os.system("cp --parents %s %s" % (line, SRC))
 except StopIteration:
     print 'StopIteration err'
 else: 
-    os.system("rm %s" % tmp)
+    os.system("rm %s" % now)
     reader.close()
     print 'output: ' + packagename + '.zip'
 
