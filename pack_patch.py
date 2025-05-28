@@ -1,6 +1,5 @@
 #!/usr/bin/python
 ########################################################################
-#zxx 2017/9/7
 # help:
 #     python pack_patch.py commit-id patch-number [name] [--debug]
 #sample:
